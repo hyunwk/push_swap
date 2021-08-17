@@ -6,13 +6,20 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/16 22:13:27 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/17 11:15:46 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/17 11:37:10 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
 #include <stdio.h>
+typedef struct s_deq
+{
+	int				data;
+	struct s_deq	*prev;
+	struct s_deq	*next;
+}					t_deq;
+
 int	*check_argv(int argc, char **s)
 {
 	int *stack;
@@ -53,6 +60,7 @@ int	*check_argv(int argc, char **s)
 }
 int main(int argc, char **argv)
 {
+	t_deq deq;
 	int *stack;
 
 	stack = check_argv(argc, argv);
@@ -61,5 +69,4 @@ int main(int argc, char **argv)
 		ft_putstr("\nError");
 		exit(1);
 	}
-
 }
