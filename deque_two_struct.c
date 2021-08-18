@@ -6,12 +6,13 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/18 16:33:10 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/19 02:28:53 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 #include <stdlib.h>
+#include <unistd.h>
 
 typedef struct s_node
 {
@@ -125,9 +126,9 @@ int		pop_first(t_deq *s)
 	else
 	{
 		origin_first = s->first;
-		s->last->next = origin_first->next;
-		s->last = origin_first->prev;
-		s->first->prev = origin_first->prev;
+		s->last->next = s->first->next;
+		s->first->next->prev = s->last;
+		s->first= s->first->next;
 	}
 	removed_data = origin_first->data;
 	free(origin_first);
@@ -194,9 +195,32 @@ void push(t_deq *a, t_deq *b)
 
 void rotate(t_deq *s)
 {
+	push_last(s, pop_first(s));
 }
 
+void reverse_rotate(t_deq *s)
+{
+	push_first(s, pop_last(s));
+}
 #include<stdio.h>
+
+void print_all(t_deq *s)
+{
+	t_node *node;
+
+	if (!(s->first))
+		return ;
+	node = s->first;
+	while (node)
+	{
+		printf("%d ",node->data);
+		node = node->next;
+		if (node == s->first)
+			return ;
+	}
+	printf("\n");
+}
+
 int main()
 {
 	t_deq *a;
@@ -206,34 +230,18 @@ int main()
 	push_last(a, 1);
 	push_last(a, 2);
 	push_last(a, 3);
-	printf("a->first %d\n", a->first->data);
-	printf("a->first->prev %d\n", a->first->prev->data);
-	printf("a->first->next %d\n", a->first->next->data);
-	printf("a->last %d\n", a->last->data);
-	printf("a->last->prev %d\n", a->last->prev->data);
-	printf("a->last->next%d\n", a->last->next->data);
-	swap(a);
-	printf("======after swap a\n");
-	printf("a->first %d\n", a->first->data);
-	printf("a->first->prev %d\n", a->first->prev->data);
-	printf("a->first->next %d\n", a->first->next->data);
-	printf("a->last %d\n", a->last->data);
-	printf("a->last->prev %d\n", a->last->prev->data);
-	printf("a->last->next%d\n", a->last->next->data);
-	push(a, b);
-	printf("======after push\na\n");
-	printf("a->first %d\n", a->first->data);
-	printf("a->first->prev %d\n", a->first->prev->data);
-	printf("a->first->next %d\n", a->first->next->data);
-	printf("a->last %d\n", a->last->data);
-	printf("a->last->prev %d\n", a->last->prev->data);
-	printf("a->last->next%d\n", a->last->next->data);
-	printf("b\n");
-	printf("b->first %d\n", b->first->data);
-	printf("b->first->prev %d\n", b->first->prev->data);
-	printf("b->first->next %d\n", b->first->next->data);
-	printf("b->last %d\n", b->last->data);
-	printf("b->last->prev %d\n", b->last->prev->data);
-	printf("b->last->next%d\n", b->last->next->data);
+	push_last(a, 4);
 
+//	ft_putstr("after swap\n");
+//	swap(a);
+//	print_all(a);
+//	print_all(b);
+	ft_putstr("after ra\n");
+	rotate(a);
+	print_all(a);
+	print_all(b);
+	ft_putstr("after rra\n");
+	reverse_rotate(a);
+	print_all(a);
+	print_all(b);
 }
