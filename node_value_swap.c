@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/20 19:03:18 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/20 20:13:11 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,7 @@ int get_stack_len(t_deq *s)
 	int len;
 	t_node *node;
 
+	len = 0;
 	node = s->first;
 	while (node)
 	{
@@ -217,22 +218,67 @@ void reverse_rotate(t_deq *s)
 
 #include<stdio.h>
 
-void print_all(t_deq *s)
+void print_all(t_deq *s, t_deq *s2)
 {
 	t_node *node;
+	t_node *node_2;
+	int		len;
+	int		len_1;
+	int		len_2;
+	int		i;
+	int		j;
+	int		k;
 
-	if (!(s->first))
-		return ;
-	node = s->first;
-	while (node)
+	len_1 = get_stack_len(s);
+	len_2 = get_stack_len(s2);
+	if (len_1 > len_2)
 	{
-		printf("%d ",node->data);
-		node = node->next;
-		if (node == s->first)
-			return ;
+		k = len_1 - len_2;
+		len = len_1;
 	}
-	printf("\n");
+	else
+	{
+		k = len_2 - len_1;
+		len = len_2;
+	}
+	i = 0;
+	node = s->last;
+	node_2 = s2->last;
+	printf("----------------------------\n");
+	while (i < len)
+	{
+		j = 7;
+		if (len_1 > len_2 || !k)
+		{
+
+			printf("%d : ",node->data);
+			while (j != -1)
+			{
+				printf("%d",node->data >> j & 1);
+				j--;
+			}
+			node = node->prev;
+		}
+		printf("    ");
+		j = 7;
+		if (len_2 > len_1 || !k)
+		{
+			printf("%d : ",node_2->data);
+			while (j != -1)
+			{
+				printf("%d",node_2->data >> j & 1);
+				j--;
+			}
+			node = node->prev;
+		}
+		k--;
+		printf("\n");
+		i++;
+	}
+	printf("----------------------------\n");
+	printf("        a               b  "); 
 }
+
 t_deq *simplify(t_deq *s)
 {
 	t_deq *stack;
@@ -240,7 +286,6 @@ t_deq *simplify(t_deq *s)
 	t_node *j;
 	int temp;
 
-	
 	init_deq(&stack);
 	i = s->first;
 	while (i)
@@ -255,7 +300,7 @@ t_deq *simplify(t_deq *s)
 			if (j == s->first)
 				break;
 		}
-		push_last(stack, get_stack_len(s) - 2 - temp);
+		push_last(stack, get_stack_len(s) - 1 - temp);
 		i = i->next;
 		if (i == s->first)
 			break;
@@ -263,6 +308,78 @@ t_deq *simplify(t_deq *s)
 	return (stack);
 }
 
+void	sort(t_deq *a, t_deq *b)
+{
+	int		i;
+	int		j;
+	int		len;
+	int		max_bits;
+	int		num;
+
+	i = 0;
+	len = get_stack_len(a);
+	while ((len - 1) >> max_bits)
+		max_bits++;
+	while (i < max_bits)
+	{
+		j = 0;
+		while (j < len)
+		{
+			if (a->last->data & 1 << i)
+			{
+				reverse_rotate(a);
+				ft_putstr("rra\n");
+				print_all(a, b);
+			}
+			else
+			{
+				push(a, b);
+				ft_putstr("pa\n");
+				print_all(a, b);
+			}
+			j++;
+		}
+		i++;
+	}
+	while (b->first)
+	{
+		ft_putstr("pb\n");
+		push(b, a);
+	}
+	print_all(a, b);
+}
+
+//void	sort(t_deq *a, t_deq *b, int n)
+//{
+//	t_node *a_node;
+//	t_node *b_node;
+//	int		len;
+//
+//	len = get_stack_len(a);
+//	a_node = a->first;
+//	b_node = b->first;
+//	while (a_node)
+//	{
+//		if (a_node->data & n)
+//			push(a, b);
+//		else
+//			reverse_rotate(a);
+//		a_node = a_node->next;
+//		if (a_node == a->first)
+//			break;
+//	}
+//	while (b_node)
+//	{
+//		push(b, a);
+//	}
+//	if (n == 4)
+//		return ;
+//	ft_putstr("a\n");
+//	print_all(a);
+//	ft_putstr("b\n");
+//	print_all(b);
+//	sort(a, b, n * 2);
+//}
 int main()
 {
 	t_deq *a;
@@ -271,25 +388,11 @@ int main()
 
 	init_deq(&a);
 	init_deq(&b);
-	push_last(a, 3);
-	push_last(a, 4);
 	push_last(a, 1);
 	push_last(a, 2);
+	push_last(b, 3);
 
 	s_a = simplify(a);
-	print_all(s_a);
-//	ft_putstr("after swap\n");
-//	swap(a);
-//	print_all(a);
-//	print_all(b);
-//	usleep(10);
-//	ft_putstr("after ra\n");
-//	rotate(a);
-//	print_all(a);
-//	print_all(b);
-//	usleep(10);
-//	ft_putstr("after rra\n");
-//	reverse_rotate(a);
-//	print_all(a);
-//	print_all(b);
+	print_all(a, b);
+//	sort(s_a, b);
 }
