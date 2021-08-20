@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/20 20:13:11 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/20 20:34:09 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 typedef struct s_node
 {
-	int data;
+	unsigned int data;
 	struct s_node	*prev;
 	struct s_node	*next;
 }					t_node;
@@ -130,6 +130,8 @@ int		pop_last(t_deq *s)
 	t_node *origin_last;
 	int		removed_data;
 
+	origin_last = s->last;
+	removed_data = origin_last->data;
 	if (s->last == 0)
 	{
 		ft_putstr("remove error");
@@ -142,12 +144,10 @@ int		pop_last(t_deq *s)
 	}
 	else
 	{
-		origin_last = s->last;
 		s->last->prev->next = origin_last->next;
 		s->first->prev = origin_last->prev;
 		s->last = origin_last->prev;
 	}
-	removed_data = origin_last->data;
 	free(origin_last);
 	return (removed_data);
 }
@@ -165,23 +165,9 @@ void swap(t_deq *s)
 	// 2. data 하나 있을 경우
 	if (s->first == s->first->next)
 		return ;
-	// 3. data 2개 있을 경우
-//	if (s->first->next == s->last)
-//	{
-//		temp = s->first;
-//		s->first = s->last;
-//		s->last = temp;
-//		return ;
-//	}
-	// 4. data 3개 이상
-
 	data = s->last->data;
 	s->last->data = s->last->prev->data;
 	s->last->prev->data = data;
-//	data_last = pop_last(s);
-//	data_last_prev = pop_last(s);
-//	push_last(s, data_last);
-//	push_last(s, data_last_prev);
 }
 
 int get_stack_len(t_deq *s)
@@ -244,7 +230,6 @@ void print_all(t_deq *s, t_deq *s2)
 	i = 0;
 	node = s->last;
 	node_2 = s2->last;
-	printf("----------------------------\n");
 	while (i < len)
 	{
 		j = 7;
@@ -275,8 +260,7 @@ void print_all(t_deq *s, t_deq *s2)
 		printf("\n");
 		i++;
 	}
-	printf("----------------------------\n");
-	printf("        a               b  "); 
+	printf("        a               b\n"); 
 }
 
 t_deq *simplify(t_deq *s)
@@ -300,7 +284,7 @@ t_deq *simplify(t_deq *s)
 			if (j == s->first)
 				break;
 		}
-		push_last(stack, get_stack_len(s) - 1 - temp);
+		push_last(stack, get_stack_len(s)  - temp);
 		i = i->next;
 		if (i == s->first)
 			break;
@@ -313,86 +297,56 @@ void	sort(t_deq *a, t_deq *b)
 	int		i;
 	int		j;
 	int		len;
+	int		temp_len;
 	int		max_bits;
 	int		num;
 
 	i = 0;
 	len = get_stack_len(a);
-	while ((len - 1) >> max_bits)
+	while (len)
+	{
+		len /= 2;
 		max_bits++;
+	}
+	len = get_stack_len(a);
 	while (i < max_bits)
 	{
 		j = 0;
 		while (j < len)
 		{
-			if (a->last->data & 1 << i)
+			print_all(a, b);
+			if (a->last->data >> i & 1)
 			{
 				reverse_rotate(a);
 				ft_putstr("rra\n");
-				print_all(a, b);
 			}
 			else
 			{
 				push(a, b);
 				ft_putstr("pa\n");
-				print_all(a, b);
 			}
 			j++;
 		}
 		i++;
-	}
-	while (b->first)
-	{
-		ft_putstr("pb\n");
-		push(b, a);
+		while (b->first)
+		{
+			print_all(a, b);
+			ft_putstr("pb\n");
+			push(b, a);
+		}
 	}
 	print_all(a, b);
 }
 
-//void	sort(t_deq *a, t_deq *b, int n)
-//{
-//	t_node *a_node;
-//	t_node *b_node;
-//	int		len;
-//
-//	len = get_stack_len(a);
-//	a_node = a->first;
-//	b_node = b->first;
-//	while (a_node)
-//	{
-//		if (a_node->data & n)
-//			push(a, b);
-//		else
-//			reverse_rotate(a);
-//		a_node = a_node->next;
-//		if (a_node == a->first)
-//			break;
-//	}
-//	while (b_node)
-//	{
-//		push(b, a);
-//	}
-//	if (n == 4)
-//		return ;
-//	ft_putstr("a\n");
-//	print_all(a);
-//	ft_putstr("b\n");
-//	print_all(b);
-//	sort(a, b, n * 2);
-//}
 int main()
 {
 	t_deq *a;
 	t_deq *b;
-	t_deq *s_a;
 
 	init_deq(&a);
 	init_deq(&b);
 	push_last(a, 1);
 	push_last(a, 2);
-	push_last(b, 3);
-
-	s_a = simplify(a);
-	print_all(a, b);
-//	sort(s_a, b);
+	push_last(a, 3);
+	sort(simplify(a), b);
 }
