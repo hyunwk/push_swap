@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/20 20:34:09 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/21 15:56:56 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 typedef struct s_node
 {
-	unsigned int data;
+	int data;
 	struct s_node	*prev;
 	struct s_node	*next;
 }					t_node;
@@ -297,9 +297,7 @@ void	sort(t_deq *a, t_deq *b)
 	int		i;
 	int		j;
 	int		len;
-	int		temp_len;
 	int		max_bits;
-	int		num;
 
 	i = 0;
 	len = get_stack_len(a);
@@ -338,15 +336,68 @@ void	sort(t_deq *a, t_deq *b)
 	print_all(a, b);
 }
 
-int main()
+int is_sorted(t_deq *s)
+{
+	int		temp;
+	t_node *node;
+
+	node = s->first;
+	temp = node->data;
+	while (node)
+	{
+		node = node->next;
+		if (node == s->first)
+			return (1);
+		if (temp - node->data != 1)
+			return (0);
+	}
+	return (1);
+}
+
+t_deq *check_argv(int argc, char **s)
+{
+	int num;
+	char **splited;
+	t_deq *a;
+	t_node *node;
+
+	init_deq(&a);
+	while (*(++s))
+	{
+		splited = ft_split(*s, ' ');
+		while (*splited)
+		{	
+			num = ft_atoi(*splited);
+			if (num == -1)
+				return (0);
+			node = (a)->first;
+			while (node)
+			{
+				if (node ->data == num)
+					return (0);
+				node = node->next;
+				if (node == a->first)
+					break;
+			}
+			push_last(a, num);
+			splited++;
+		}
+	}
+	if (is_sorted(a))
+		return (0);
+	return (a);
+}
+
+int main(int argc, char **argv)
 {
 	t_deq *a;
 	t_deq *b;
 
-	init_deq(&a);
+	if (argc == 1)
+		return (0);
 	init_deq(&b);
-	push_last(a, 1);
-	push_last(a, 2);
-	push_last(a, 3);
+	a = check_argv(argc, argv);
+	if (!a)
+		return (0);
 	sort(simplify(a), b);
 }
