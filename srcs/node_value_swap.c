@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/24 22:21:19 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/24 22:22:26 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,7 +313,7 @@ void	sort(t_list *a, t_list *b)
 		while (len--)
 		{
 			if (a->last->data >> idx & 1)
-				reverse_rotate(a);
+				rotate(a);
 			else
 				push(a, b);
 		}
