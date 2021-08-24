@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/24 15:05:46 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/24 16:08:58 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ t_node *make_node(int val)
 	return (node);
 }
 
-void init_list(t_list **s, char c)
+t_list **init_list(t_list **s, char c)
 {
 	*s = (t_list *)malloc(sizeof(t_list));
 	if ((*s) == 0)
@@ -51,6 +51,7 @@ void init_list(t_list **s, char c)
 	(*s)->size = 0;
 	(*s)->first = 0;
 	(*s)->last= 0;
+	return (s);
 }
 
 void push_first(t_list *s, int val)
@@ -129,15 +130,10 @@ int		pop_last(t_list *s)
 
 void swap(t_list *s)
 {
-	t_node *temp;
 	int		data;
-	int		data_last;
-	int		data_last_prev;
 
-	//	1. 아무것도 없을 경우
 	if (!(s->first))
 		return ;
-	// 2. data 하나 있을 경우
 	if (s->first == s->first->next)
 		return ;
 	data = s->last->data;
@@ -184,66 +180,11 @@ void rotate(t_list *s)
 void reverse_rotate(t_list *s)
 {
 	push_first(s, pop_last(s));
-	ft_putstr("rr");
+	ft_putchar('r');
+	ft_putchar('r');
 	ft_putchar(s->name);
 	ft_putchar('\n');
 }
-
-#include<stdio.h>
-
-void print_all(t_list *s, t_list *s2)
-{
-//	t_node *node;
-//
-//	node = s->last;
-//	while (node)
-//	{
-//		printf("%d ", node->data);
-//		node = node->prev;
-//	}
-//	return ;
-//}	
-	t_node *node;
-	t_node *node_2;
-	int		len;
-	int		k;
-
-	if (s->size > s2->size)
-	{
-		k = s->size - s2->size;
-		len = s->size;
-	}
-	else if (s->size < s2->size)
-	{
-		k = s2->size - s->size;
-		len = s2->size;
-	}
-	else
-	{
-		k = s->size;
-		len = s->size;
-	}	
-	node = s->last;
-	node_2 = s2->last;
-	while (len--)
-	{
-		if (s->size > s2->size || !k)
-		{
-			printf("%d",node->data);
-			node = node->prev;
-		}
-		printf("    ");
-		if (s2->size > s->size || !k)
-		{
-			printf("%d",node_2->data);
-			node_2 = node_2->prev;
-		}
-		if (k)
-			k--;
-		printf("\n");
-	}
-	printf("-------\na    b\n"); 
-	}
 
 int is_sorted(t_list *s)
 {
@@ -303,9 +244,52 @@ void sort_five(t_list *a, t_list *b)
 		rotate(b);
 	push(b, a);
 	push(b, a);
-	print_all(a, b);
 	exit(0);
 }
+#include<stdio.h>
+void print_all(t_list *s, t_list *s2)
+{
+	t_node *node;
+	t_node *node_2;
+	int		len;
+	int		k;
+
+	if (s->size > s2->size)
+	{
+		k = s->size - s2->size;
+		len = s->size;
+	}
+	else if (s->size < s2->size)
+	{
+		k = s2->size - s->size;
+		len = s2->size;
+	}
+	else
+	{
+		k = s->size;
+		len = s->size;
+	}	
+	node = s->last;
+	node_2 = s2->last;
+	while (len--)
+	{
+		if (s->size > s2->size || !k)
+		{
+			printf("%d",node->data);
+			node = node->prev;
+		}
+		printf("    ");
+		if (s2->size > s->size || !k)
+		{
+			printf("%d",node_2->data);
+			node_2 = node_2->prev;
+		}
+		if (k)
+			k--;
+		printf("\n");
+	}
+	printf("-------\na    b\n"); 
+	}
 
 void	sort(t_list *a, t_list *b)
 {
@@ -324,6 +308,7 @@ void	sort(t_list *a, t_list *b)
 			return ;
 		while (len--)
 		{
+			print_all(a, b);
 			if (a->last->data >> idx & 1)
 				reverse_rotate(a);
 			else
@@ -332,12 +317,11 @@ void	sort(t_list *a, t_list *b)
 		while (b->size)
 			push(b, a);
 	}
-	print_all(a, b);
 }
 
 void error(void)
 {
-	ft_putstr("Error\n");
+	write(2, "Error\n", 6);
 	exit(1);
 }
 void free_stack(t_list *s)
@@ -354,47 +338,46 @@ void free_stack(t_list *s)
 	}
 	free(s);
 }
-t_list *check_argv(int argc, char **s)
+
+void	is_valid_num(int num, t_node *node)
+{
+	if ((num < -2147483648) || (num > 2147483647))
+		error();
+	while (node)
+	{
+		if (node ->data == num)
+			error();
+		node = node->next;
+	}
+}
+
+t_list *check_argv(t_list **a, char **s)
 {
 	int num;
 	int idx;
 	char **splited;
-	t_list *a;
-	t_node *node;
 
-	init_list(&a, 'a');
 	while (*(++s))
 	{
 		splited = ft_split(*s, ' ');
 		idx = 0;
 		while (splited[idx])
 		{	
-			// atoi error check
 			num = ft_atoi(splited[idx]);
+			is_valid_num(num, (*a)->first);
+			push_first(*a, num);
 			free(splited[idx]);
-			if ((num < -2147483648) || (num > 2147483647))
-				error();
-			node = (a)->first;
-			while (node)
-			{
-				if (node ->data == num)
-					return (0);
-				node = node->next;
-			}
-			push_first(a, num);
 			idx++;
 		}
 		free(splited);
 	}
-	if (is_sorted(a))
+	if (is_sorted(*a))
 	{
-		free_stack(a);
+		free_stack(*a);
 		exit(1);
 	}
-	return (a);
+	return (*a);
 }
-
-
 
 t_list *simplify(t_list *s)
 {
@@ -403,6 +386,8 @@ t_list *simplify(t_list *s)
 	t_list *stack;
 	int data;
 
+	if (!s)
+		exit(1);
 	init_list(&stack, 'a');
 	i = s->last;
 	while (i)
@@ -421,7 +406,7 @@ t_list *simplify(t_list *s)
 	free_stack(s);
 	return (stack);
 }
-#include <string.h>
+
 int main(int argc, char **argv)
 {
 	t_list *a;
@@ -429,10 +414,8 @@ int main(int argc, char **argv)
 
 	if (argc == 1)
 		return (0);
+	a = simplify(check_argv(init_list(&a, 'a'), argv));
 	init_list(&b, 'b');
-	a = simplify(check_argv(argc, argv));
-	if (!a)
-		return (0);
 	if (a->size == 3)
 		sort_three(a);
 	else if (a->size == 5)
@@ -441,7 +424,5 @@ int main(int argc, char **argv)
 		sort(a, b);
 	free_stack(a);
 	free_stack(b);
-	while (1)
-		;
 	return (0);
 }

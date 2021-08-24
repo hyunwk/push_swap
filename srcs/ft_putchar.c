@@ -1,22 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   push_swap.h                                        :+:      :+:    :+:   */
+/*   ft_putchar.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/16 22:17:38 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/17 11:01:28 by hyunwkim         ###   ########.fr       */
+/*   Created: 2021/08/21 20:53:10 by hyunwkim          #+#    #+#             */
+/*   Updated: 2021/08/24 16:06:32 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PUSH_SWAP_H
-# define PUSH_SWAP_H
-# include <unistd.h>
-# include <stdlib.h>
+#include "push_swap.h"
 
-int		ft_strlen(char *s);
-void    ft_putstr(char *s);
-char	**ft_split(char const *s, char c);
-int		ft_atoi(char *str);
-#endif
+void	ft_putchar(char c)
+{
+	write(1, &c, 1);
+}
