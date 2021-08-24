@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/24 16:08:58 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/24 22:21:19 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ void push(t_list *a, t_list *b)
 
 void rotate(t_list *s)
 {
-	push_last(s, pop_first(s));
+	push_first(s, pop_last(s));
 	ft_putchar('r');
 	ft_putchar(s->name);
 	ft_putchar('\n');
@@ -179,72 +179,11 @@ void rotate(t_list *s)
 
 void reverse_rotate(t_list *s)
 {
-	push_first(s, pop_last(s));
+	push_last(s, pop_first(s));
 	ft_putchar('r');
 	ft_putchar('r');
 	ft_putchar(s->name);
 	ft_putchar('\n');
-}
-
-int is_sorted(t_list *s)
-{
-	int		prev_data;
-	t_node *node;
-
-	node = s->last;
-	prev_data = -1;
-	while (node)
-	{
-		if (prev_data < node->data)
-		{
-			prev_data = node->data;
-			node = node->prev;
-		}
-		else
-			return (0);
-	}
-	return (1);
-}
-void sort_three(t_list *a)
-{
-	if (0 == a->first->data)
-	{
-		if (2 == a->last->data)
-			swap(a);
-		rotate(a);
-	}
-	if (0 == a->first->next->data)
-	{
-		if (2 == a->last->data)
-			reverse_rotate(a);
-		else
-			swap(a);
-	}
-	else 
-	{
-		reverse_rotate(a);
-		swap(a);
-	}
-}
-void sort_five(t_list *a, t_list *b)
-{
-	int		len;
-
-	len = a->size;
-	while (len--)
-	{
-		if (a->last->data > 2)
-			push(a, b);
-		else
-			reverse_rotate(a);
-	}
-	sort_three(a);
-	len = a->size + b->size;
-	if (b->last->data > b->first->data)
-		rotate(b);
-	push(b, a);
-	push(b, a);
-	exit(0);
 }
 #include<stdio.h>
 void print_all(t_list *s, t_list *s2)
@@ -289,7 +228,72 @@ void print_all(t_list *s, t_list *s2)
 		printf("\n");
 	}
 	printf("-------\na    b\n"); 
+}
+
+
+int is_sorted(t_list *s)
+{
+	int		prev_data;
+	t_node *node;
+
+	node = s->last;
+	prev_data = -1;
+	while (node)
+	{
+		if (prev_data < node->data)
+		{
+			prev_data = node->data;
+			node = node->prev;
+		}
+		else
+			return (0);
 	}
+	return (1);
+}
+void sort_three(t_list *a)
+{
+	if (0 == a->first->data)
+	{
+		if (2 == a->last->data)
+			swap(a);
+		reverse_rotate(a);
+	}
+	else if (0 == a->first->next->data)
+	{
+		if (2 == a->last->data)
+			rotate(a);
+		else
+			swap(a);
+	}
+	else if (0 == a->last->data & 1 == a->first->data)
+	{
+		reverse_rotate(a);
+		swap(a);
+	}
+}
+
+void sort_five(t_list *a, t_list *b)
+{
+	int		len;
+
+	len = a->size;
+	while (len-- && !is_sorted(a))
+	{
+		if (a->last->data > 2)
+			push(a, b);
+		else
+			rotate(a);
+	}
+	sort_three(a);
+	if (b->first->data > b->last->data)
+		rotate(b);
+	len = b->size;
+	while (b->first)
+		push(b, a);
+	while (len--)
+		rotate(a);
+	exit(0);
+}
 
 void	sort(t_list *a, t_list *b)
 {
@@ -308,7 +312,6 @@ void	sort(t_list *a, t_list *b)
 			return ;
 		while (len--)
 		{
-			print_all(a, b);
 			if (a->last->data >> idx & 1)
 				reverse_rotate(a);
 			else
@@ -339,7 +342,7 @@ void free_stack(t_list *s)
 	free(s);
 }
 
-void	is_valid_num(int num, t_node *node)
+void	is_valid_num(long long num, t_node *node)
 {
 	if ((num < -2147483648) || (num > 2147483647))
 		error();
@@ -353,7 +356,7 @@ void	is_valid_num(int num, t_node *node)
 
 t_list *check_argv(t_list **a, char **s)
 {
-	int num;
+	long long num;
 	int idx;
 	char **splited;
 
@@ -418,7 +421,8 @@ int main(int argc, char **argv)
 	init_list(&b, 'b');
 	if (a->size == 3)
 		sort_three(a);
-	else if (a->size == 5)
+	else if (a->size == 4 || a->size == 5)
+	//else if (a->size == 5)
 		sort_five(a, b);
 	else 
 		sort(a, b);
