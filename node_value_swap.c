@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/24 12:50:31 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/24 15:05:46 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@ typedef struct s_node
 	struct s_node	*next;
 }					t_node;
 
-typedef struct s_deq
+typedef struct s_list
 {
 	char	name;
 	int		size;
 	t_node	*first;
 	t_node	*last;
-}					t_deq;
+}					t_list;
 
 t_node *make_node(int val)
 {
@@ -35,31 +35,25 @@ t_node *make_node(int val)
 
 	node = (t_node *)malloc(sizeof(t_node));
 	if (!node)
-	{
-		ft_putstr("malloc error.\n");
-		exit(1);
-	}
+		error();
 	node->data = val;
 	node->prev = 0;
 	node->next = 0;
 	return (node);
 }
 
-void init_deq(t_deq **s, char c)
+void init_list(t_list **s, char c)
 {
-	*s = (t_deq *)malloc(sizeof(t_deq));
+	*s = (t_list *)malloc(sizeof(t_list));
 	if ((*s) == 0)
-	{
-		ft_putstr("malloc error.\n");
-		exit(1);
-	}
+		error();
 	(*s)->name = c;
 	(*s)->size = 0;
 	(*s)->first = 0;
 	(*s)->last= 0;
 }
 
-void push_first(t_deq *s, int val)
+void push_first(t_list *s, int val)
 {
 	t_node *new;
 	
@@ -73,7 +67,7 @@ void push_first(t_deq *s, int val)
 	s->size++;
 }
 
-void push_last(t_deq *s, int val)
+void push_last(t_list *s, int val)
 {
 	t_node *new;
 	
@@ -85,52 +79,55 @@ void push_last(t_deq *s, int val)
 		s->last->next = new;
 		new->prev = s->last;
 		s->last = new;
+		s->size++;
 	}
-	s->size++;
 }
 
-int		pop_first(t_deq *s)
+int		pop_first(t_list *s)
 {
 	int		removed_data;
+	t_node	*origin_first;
 
 	if (s->first == NULL)
-		error("no data to pop_first");
-	removed_data = s->first->data;
-	s->first->data = 0;
+		error();
+	origin_first = s->first;
+	removed_data = origin_first->data;
+	origin_first->data = 0;
 
-	if (s->first->next != NULL)
-		s->first->next->prev = NULL;
+	if (origin_first->next != NULL)
+		origin_first->next->prev = NULL;
 
-	s->first = s->first->next;
-
+	s->first = origin_first->next;
+	free(origin_first);
 	if (s->first == NULL)
 		s->last = NULL;
 	s->size--;
 	return (removed_data);
 }
-int		pop_last(t_deq *s)
+int		pop_last(t_list *s)
 {
 	int		removed_data;
-
+	t_node	*origin_last;
 
 	if (s->first == NULL)
-		error("no data to pop_last");
-	removed_data = s->last->data;
+		error();
+	origin_last = s->last;
+	removed_data = origin_last->data;
 
-	s->last->data = 0;
+	origin_last->data = 0;
 
-	if (s->last->prev != NULL)
-		s->last->prev->next = NULL;
+	if (origin_last->prev != NULL)
+		origin_last->prev->next = NULL;
 
-	s->last = s->last->prev;
-
+	s->last = origin_last->prev;
+	free(origin_last);
 	if (s->last == NULL)
 		s->first = NULL;
 	s->size--;
 	return (removed_data);
 }
 
-void swap(t_deq *s)
+void swap(t_list *s)
 {
 	t_node *temp;
 	int		data;
@@ -151,7 +148,7 @@ void swap(t_deq *s)
 	ft_putchar('\n');
 }
 
-int get_stack_len(t_deq *s)
+int get_stack_len(t_list *s)
 {
 	int len;
 	t_node *node;
@@ -168,7 +165,7 @@ int get_stack_len(t_deq *s)
 	return (len);
 }
 
-void push(t_deq *a, t_deq *b)
+void push(t_list *a, t_list *b)
 {
 	push_last(b, pop_last(a));
 	ft_putchar('p');
@@ -176,7 +173,7 @@ void push(t_deq *a, t_deq *b)
 	ft_putchar('\n');
 }
 
-void rotate(t_deq *s)
+void rotate(t_list *s)
 {
 	push_last(s, pop_first(s));
 	ft_putchar('r');
@@ -184,7 +181,7 @@ void rotate(t_deq *s)
 	ft_putchar('\n');
 }
 
-void reverse_rotate(t_deq *s)
+void reverse_rotate(t_list *s)
 {
 	push_first(s, pop_last(s));
 	ft_putstr("rr");
@@ -194,7 +191,7 @@ void reverse_rotate(t_deq *s)
 
 #include<stdio.h>
 
-void print_all(t_deq *s, t_deq *s2)
+void print_all(t_list *s, t_list *s2)
 {
 //	t_node *node;
 //
@@ -209,22 +206,23 @@ void print_all(t_deq *s, t_deq *s2)
 	t_node *node;
 	t_node *node_2;
 	int		len;
-	int		len_1;
-	int		len_2;
 	int		k;
 
-	len_1 = s->size;
-	len_2 = s2->size;
 	if (s->size > s2->size)
 	{
-		k = s->size - s2->size + 1;
+		k = s->size - s2->size;
 		len = s->size;
+	}
+	else if (s->size < s2->size)
+	{
+		k = s2->size - s->size;
+		len = s2->size;
 	}
 	else
 	{
-		k = s2->size - s->size + 1;
-		len = s2->size;
-	}
+		k = s->size;
+		len = s->size;
+	}	
 	node = s->last;
 	node_2 = s2->last;
 	while (len--)
@@ -240,31 +238,33 @@ void print_all(t_deq *s, t_deq *s2)
 			printf("%d",node_2->data);
 			node_2 = node_2->prev;
 		}
-		k--;
+		if (k)
+			k--;
 		printf("\n");
 	}
-	printf("   a       b\n"); 
+	printf("-------\na    b\n"); 
 	}
 
-int is_sorted(t_deq *s)
+int is_sorted(t_list *s)
 {
-	int		temp;
+	int		prev_data;
 	t_node *node;
 
-	node = s->first;
-	temp = node->data;
+	node = s->last;
+	prev_data = -1;
 	while (node)
 	{
-		node = node->next;
-		if (node == s->first)
-			return (1);
-		if (temp - node->data != 1)
+		if (prev_data < node->data)
+		{
+			prev_data = node->data;
+			node = node->prev;
+		}
+		else
 			return (0);
-		temp = node->data;
 	}
-	return (0);
+	return (1);
 }
-void sort_three(t_deq *a)
+void sort_three(t_list *a)
 {
 	if (0 == a->first->data)
 	{
@@ -285,7 +285,7 @@ void sort_three(t_deq *a)
 		swap(a);
 	}
 }
-void sort_five(t_deq *a, t_deq *b)
+void sort_five(t_list *a, t_list *b)
 {
 	int		len;
 
@@ -307,79 +307,73 @@ void sort_five(t_deq *a, t_deq *b)
 	exit(0);
 }
 
-void	sort(t_deq *a, t_deq *b)
+void	sort(t_list *a, t_list *b)
 {
-	int		i;
-	int		j;
+	int		idx;
 	int		len;
-	int		max_bits;
-	if (get_stack_len(a) <= 3)
-	{	
-		sort_three(a);
-		exit(0);
-	}
-	if (get_stack_len(a) <= 5)
+	int		max_bit;
+
+	idx = -1;
+	max_bit = 0;
+	while ((a->size - 1) >> max_bit)
+		max_bit++;
+	while (idx++ < max_bit)
 	{
-		sort_five(a, b);
-		exit(0);
-	}
-	i = 0;
-	len = get_stack_len(a);
-	while (len)
-	{
-		len /= 2;
-		max_bits++;
-	}
-	while (i < max_bits)
-	{
-		j = 0;
-		while (j < get_stack_len(a))
+		len = a->size;
+		if (is_sorted(a))
+			return ;
+		while (len--)
 		{
-			print_all(a, b);
-			if (is_sorted(a))
-				return ;
-			if (a->last->data >> i & 1)
-			{
+			if (a->last->data >> idx & 1)
 				reverse_rotate(a);
-				ft_putstr("rra\n");
-			}
 			else
-			{
 				push(a, b);
-				ft_putstr("pa\n");
-			}
-			j++;
 		}
-		i++;
-		while (b->first)
-		{
-			ft_putstr("pb\n");
+		while (b->size)
 			push(b, a);
-		}
 	}
+	print_all(a, b);
 }
 
-void error(char *s)
+void error(void)
 {
-	ft_putstr(s);
+	ft_putstr("Error\n");
 	exit(1);
 }
-t_deq *check_argv(int argc, char **s)
+void free_stack(t_list *s)
+{
+	t_node *node;
+	t_node *temp;
+
+	node = s->first;
+	while (node)
+	{
+		temp = node;
+		node = node->next;
+		free(temp);
+	}
+	free(s);
+}
+t_list *check_argv(int argc, char **s)
 {
 	int num;
+	int idx;
 	char **splited;
-	t_deq *a;
+	t_list *a;
 	t_node *node;
 
-	init_deq(&a, 'a');
+	init_list(&a, 'a');
 	while (*(++s))
 	{
 		splited = ft_split(*s, ' ');
-		while (*splited)
+		idx = 0;
+		while (splited[idx])
 		{	
-			num = ft_atoi(*splited);
+			// atoi error check
+			num = ft_atoi(splited[idx]);
+			free(splited[idx]);
 			if ((num < -2147483648) || (num > 2147483647))
-				error("argument error");
+				error();
 			node = (a)->first;
 			while (node)
 			{
@@ -388,22 +382,28 @@ t_deq *check_argv(int argc, char **s)
 				node = node->next;
 			}
 			push_first(a, num);
-			splited++;
+			idx++;
 		}
+		free(splited);
 	}
 	if (is_sorted(a))
-		error("\n");
+	{
+		free_stack(a);
+		exit(1);
+	}
 	return (a);
 }
 
-t_deq *simplify(t_deq *s)
+
+
+t_list *simplify(t_list *s)
 {
 	t_node *i;
 	t_node *j;
-	t_deq *stack;
+	t_list *stack;
 	int data;
 
-	init_deq(&stack, 'a');
+	init_list(&stack, 'a');
 	i = s->last;
 	while (i)
 	{
@@ -418,21 +418,30 @@ t_deq *simplify(t_deq *s)
 		push_first(stack, data);
 		i = i->prev;
 	}
-	// need to free all node
-	free(s);
+	free_stack(s);
 	return (stack);
 }
-
+#include <string.h>
 int main(int argc, char **argv)
 {
-	t_deq *a;
-	t_deq *b;
+	t_list *a;
+	t_list *b;
 
 	if (argc == 1)
 		return (0);
-	init_deq(&b, 'b');
+	init_list(&b, 'b');
 	a = simplify(check_argv(argc, argv));
 	if (!a)
 		return (0);
-	sort(a, b);
+	if (a->size == 3)
+		sort_three(a);
+	else if (a->size == 5)
+		sort_five(a, b);
+	else 
+		sort(a, b);
+	free_stack(a);
+	free_stack(b);
+	while (1)
+		;
+	return (0);
 }
