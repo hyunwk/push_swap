@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/21 15:56:56 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/24 12:50:31 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ typedef struct s_node
 
 typedef struct s_deq
 {
+	char	name;
+	int		size;
 	t_node	*first;
 	t_node	*last;
 }					t_deq;
@@ -43,7 +45,7 @@ t_node *make_node(int val)
 	return (node);
 }
 
-void init_deq(t_deq **s)
+void init_deq(t_deq **s, char c)
 {
 	*s = (t_deq *)malloc(sizeof(t_deq));
 	if ((*s) == 0)
@@ -51,6 +53,8 @@ void init_deq(t_deq **s)
 		ft_putstr("malloc error.\n");
 		exit(1);
 	}
+	(*s)->name = c;
+	(*s)->size = 0;
 	(*s)->first = 0;
 	(*s)->last= 0;
 }
@@ -60,21 +64,13 @@ void push_first(t_deq *s, int val)
 	t_node *new;
 	
 	new = make_node(val);
-	if (!(s->first))
-	{
-		s->first = new;
-		s->first->next = s->last;
-		s->first->prev = s->last;
-		s->last = new;
-		s->last->next = s->first;
-		s->last->prev= s->first;
-		return ;
-	}
-	s->first->prev = new;
-	s->last->next = new;
-	new->prev = s->last;
-	new->next= s->first;
+	new->next = s->first;
+	if (s->first != NULL)
+		s->first->prev = new;
 	s->first = new;
+	if (s->first->next == NULL)
+		s->last = s->first;
+	s->size++;
 }
 
 void push_last(t_deq *s, int val)
@@ -82,73 +78,55 @@ void push_last(t_deq *s, int val)
 	t_node *new;
 	
 	new = make_node(val);
-	if (!(s->last))
+	if (s->first == NULL)
+		push_first(s, val);
+	else
 	{
-		s->first = new;
-		s->first->next = s->last;
-		s->first->prev = s->last;
+		s->last->next = new;
+		new->prev = s->last;
 		s->last = new;
-		s->last->next = s->first;
-		s->last->prev= s->first;
-		return ;
 	}
-	s->last->next = new;
-	s->first->prev = new;
-	new->prev = s->last;
-	new->next= s->first;
-	s->last = new;
+	s->size++;
 }
 
 int		pop_first(t_deq *s)
 {
-	t_node *origin_first;
 	int		removed_data;
 
-	if (s->first== 0)
-	{
-		ft_putstr("remove error");
-		return (0);
-	}
-	if (s->first == s->last)
-	{
-		s->first = 0;
-		s->last = 0;
-	}
-	else
-	{
-		origin_first = s->first;
-		s->last->next = s->first->next;
-		s->first->next->prev = s->last;
-		s->first= s->first->next;
-	}
-	removed_data = origin_first->data;
-	free(origin_first);
+	if (s->first == NULL)
+		error("no data to pop_first");
+	removed_data = s->first->data;
+	s->first->data = 0;
+
+	if (s->first->next != NULL)
+		s->first->next->prev = NULL;
+
+	s->first = s->first->next;
+
+	if (s->first == NULL)
+		s->last = NULL;
+	s->size--;
 	return (removed_data);
 }
 int		pop_last(t_deq *s)
 {
-	t_node *origin_last;
 	int		removed_data;
 
-	origin_last = s->last;
-	removed_data = origin_last->data;
-	if (s->last == 0)
-	{
-		ft_putstr("remove error");
-		return (0);
-	}
-	if (s->first == s->last)
-	{
-		s->first = 0;
-		s->last = 0;
-	}
-	else
-	{
-		s->last->prev->next = origin_last->next;
-		s->first->prev = origin_last->prev;
-		s->last = origin_last->prev;
-	}
-	free(origin_last);
+
+	if (s->first == NULL)
+		error("no data to pop_last");
+	removed_data = s->last->data;
+
+	s->last->data = 0;
+
+	if (s->last->prev != NULL)
+		s->last->prev->next = NULL;
+
+	s->last = s->last->prev;
+
+	if (s->last == NULL)
+		s->first = NULL;
+	s->size--;
 	return (removed_data);
 }
 
@@ -158,7 +136,7 @@ void swap(t_deq *s)
 	int		data;
 	int		data_last;
 	int		data_last_prev;
-	//	s the first 2 elements at the top of stack
+
 	//	1. 아무것도 없을 경우
 	if (!(s->first))
 		return ;
@@ -168,6 +146,9 @@ void swap(t_deq *s)
 	data = s->last->data;
 	s->last->data = s->last->prev->data;
 	s->last->prev->data = data;
+	ft_putchar('s');
+	ft_putchar(s->name);
+	ft_putchar('\n');
 }
 
 int get_stack_len(t_deq *s)
@@ -177,164 +158,93 @@ int get_stack_len(t_deq *s)
 
 	len = 0;
 	node = s->first;
-	while (node)
+	while (node != s->last)
 	{
 		node = node->next;
 		len++;
-		if (node == s->first)
-			return (len);
 	}
-	return (0);
+	if (node == s->last)
+		len += 1;
+	return (len);
 }
 
 void push(t_deq *a, t_deq *b)
 {
 	push_last(b, pop_last(a));
+	ft_putchar('p');
+	ft_putchar(b->name);
+	ft_putchar('\n');
 }
 
 void rotate(t_deq *s)
 {
 	push_last(s, pop_first(s));
+	ft_putchar('r');
+	ft_putchar(s->name);
+	ft_putchar('\n');
 }
 
 void reverse_rotate(t_deq *s)
 {
 	push_first(s, pop_last(s));
+	ft_putstr("rr");
+	ft_putchar(s->name);
+	ft_putchar('\n');
 }
 
 #include<stdio.h>
 
 void print_all(t_deq *s, t_deq *s2)
 {
+//	t_node *node;
+//
+//	node = s->last;
+//	while (node)
+//	{
+//		printf("%d ", node->data);
+//		node = node->prev;
+//	}
+//	return ;
+//}	
 	t_node *node;
 	t_node *node_2;
 	int		len;
 	int		len_1;
 	int		len_2;
-	int		i;
-	int		j;
 	int		k;
 
-	len_1 = get_stack_len(s);
-	len_2 = get_stack_len(s2);
-	if (len_1 > len_2)
+	len_1 = s->size;
+	len_2 = s2->size;
+	if (s->size > s2->size)
 	{
-		k = len_1 - len_2;
-		len = len_1;
+		k = s->size - s2->size + 1;
+		len = s->size;
 	}
 	else
 	{
-		k = len_2 - len_1;
-		len = len_2;
+		k = s2->size - s->size + 1;
+		len = s2->size;
 	}
-	i = 0;
 	node = s->last;
 	node_2 = s2->last;
-	while (i < len)
+	while (len--)
 	{
-		j = 7;
-		if (len_1 > len_2 || !k)
+		if (s->size > s2->size || !k)
 		{
-
-			printf("%d : ",node->data);
-			while (j != -1)
-			{
-				printf("%d",node->data >> j & 1);
-				j--;
-			}
+			printf("%d",node->data);
 			node = node->prev;
 		}
 		printf("    ");
-		j = 7;
-		if (len_2 > len_1 || !k)
+		if (s2->size > s->size || !k)
 		{
-			printf("%d : ",node_2->data);
-			while (j != -1)
-			{
-				printf("%d",node_2->data >> j & 1);
-				j--;
-			}
-			node = node->prev;
+			printf("%d",node_2->data);
+			node_2 = node_2->prev;
 		}
 		k--;
 		printf("\n");
-		i++;
 	}
-	printf("        a               b\n"); 
-}
-
-t_deq *simplify(t_deq *s)
-{
-	t_deq *stack;
-	t_node *i;
-	t_node *j;
-	int temp;
-
-	init_deq(&stack);
-	i = s->first;
-	while (i)
-	{
-		j = s->first;
-		temp = 0;
-		while (j)
-		{
-			if (j->data > i->data)
-				temp += 1;
-			j = j->next;
-			if (j == s->first)
-				break;
-		}
-		push_last(stack, get_stack_len(s)  - temp);
-		i = i->next;
-		if (i == s->first)
-			break;
+	printf("   a       b\n"); 
 	}
-	return (stack);
-}
-
-void	sort(t_deq *a, t_deq *b)
-{
-	int		i;
-	int		j;
-	int		len;
-	int		max_bits;
-
-	i = 0;
-	len = get_stack_len(a);
-	while (len)
-	{
-		len /= 2;
-		max_bits++;
-	}
-	len = get_stack_len(a);
-	while (i < max_bits)
-	{
-		j = 0;
-		while (j < len)
-		{
-			print_all(a, b);
-			if (a->last->data >> i & 1)
-			{
-				reverse_rotate(a);
-				ft_putstr("rra\n");
-			}
-			else
-			{
-				push(a, b);
-				ft_putstr("pa\n");
-			}
-			j++;
-		}
-		i++;
-		while (b->first)
-		{
-			print_all(a, b);
-			ft_putstr("pb\n");
-			push(b, a);
-		}
-	}
-	print_all(a, b);
-}
 
 int is_sorted(t_deq *s)
 {
@@ -350,10 +260,110 @@ int is_sorted(t_deq *s)
 			return (1);
 		if (temp - node->data != 1)
 			return (0);
+		temp = node->data;
 	}
-	return (1);
+	return (0);
+}
+void sort_three(t_deq *a)
+{
+	if (0 == a->first->data)
+	{
+		if (2 == a->last->data)
+			swap(a);
+		rotate(a);
+	}
+	if (0 == a->first->next->data)
+	{
+		if (2 == a->last->data)
+			reverse_rotate(a);
+		else
+			swap(a);
+	}
+	else 
+	{
+		reverse_rotate(a);
+		swap(a);
+	}
+}
+void sort_five(t_deq *a, t_deq *b)
+{
+	int		len;
+
+	len = a->size;
+	while (len--)
+	{
+		if (a->last->data > 2)
+			push(a, b);
+		else
+			reverse_rotate(a);
+	}
+	sort_three(a);
+	len = a->size + b->size;
+	if (b->last->data > b->first->data)
+		rotate(b);
+	push(b, a);
+	push(b, a);
+	print_all(a, b);
+	exit(0);
 }
 
+void	sort(t_deq *a, t_deq *b)
+{
+	int		i;
+	int		j;
+	int		len;
+	int		max_bits;
+	if (get_stack_len(a) <= 3)
+	{	
+		sort_three(a);
+		exit(0);
+	}
+	if (get_stack_len(a) <= 5)
+	{
+		sort_five(a, b);
+		exit(0);
+	}
+	i = 0;
+	len = get_stack_len(a);
+	while (len)
+	{
+		len /= 2;
+		max_bits++;
+	}
+	while (i < max_bits)
+	{
+		j = 0;
+		while (j < get_stack_len(a))
+		{
+			print_all(a, b);
+			if (is_sorted(a))
+				return ;
+			if (a->last->data >> i & 1)
+			{
+				reverse_rotate(a);
+				ft_putstr("rra\n");
+			}
+			else
+			{
+				push(a, b);
+				ft_putstr("pa\n");
+			}
+			j++;
+		}
+		i++;
+		while (b->first)
+		{
+			ft_putstr("pb\n");
+			push(b, a);
+		}
+	}
+}
+
+void error(char *s)
+{
+	ft_putstr(s);
+	exit(1);
+}
 t_deq *check_argv(int argc, char **s)
 {
 	int num;
@@ -361,31 +371,56 @@ t_deq *check_argv(int argc, char **s)
 	t_deq *a;
 	t_node *node;
 
-	init_deq(&a);
+	init_deq(&a, 'a');
 	while (*(++s))
 	{
 		splited = ft_split(*s, ' ');
 		while (*splited)
 		{	
 			num = ft_atoi(*splited);
-			if (num == -1)
-				return (0);
+			if ((num < -2147483648) || (num > 2147483647))
+				error("argument error");
 			node = (a)->first;
 			while (node)
 			{
 				if (node ->data == num)
 					return (0);
 				node = node->next;
-				if (node == a->first)
-					break;
 			}
-			push_last(a, num);
+			push_first(a, num);
 			splited++;
 		}
 	}
 	if (is_sorted(a))
-		return (0);
+		error("\n");
 	return (a);
+}
+
+t_deq *simplify(t_deq *s)
+{
+	t_node *i;
+	t_node *j;
+	t_deq *stack;
+	int data;
+
+	init_deq(&stack, 'a');
+	i = s->last;
+	while (i)
+	{
+		j = s->last;
+		data = 0;
+		while (j)
+		{
+			if (i->data > j->data)
+				data += 1;
+			j = j->prev;
+		}
+		push_first(stack, data);
+		i = i->prev;
+	}
+	// need to free all node
+	free(s);
+	return (stack);
 }
 
 int main(int argc, char **argv)
@@ -395,9 +430,9 @@ int main(int argc, char **argv)
 
 	if (argc == 1)
 		return (0);
-	init_deq(&b);
-	a = check_argv(argc, argv);
+	init_deq(&b, 'b');
+	a = simplify(check_argv(argc, argv));
 	if (!a)
 		return (0);
-	sort(simplify(a), b);
+	sort(a, b);
 }
