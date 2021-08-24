@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 14:51:47 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/24 22:22:26 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/25 00:40:00 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,6 +363,8 @@ t_list *check_argv(t_list **a, char **s)
 	while (*(++s))
 	{
 		splited = ft_split(*s, ' ');
+		if (!(*splited))
+			error();
 		idx = 0;
 		while (splited[idx])
 		{	
