@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 12:26:44 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/25 12:31:02 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/25 12:49:06 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,26 +49,6 @@ void	is_valid_num(long long num, t_node *node)
 	}
 }
 
-int	main(int argc, char **argv)
-{
-	t_list	*a;
-	t_list	*b;
-
-	if (argc == 1)
-		return (0);
-	a = simplify(check_argv(init_list(&a, 'a'), argv));
-	init_list(&b, 'b');
-	if (a->size == 3)
-		sort_three(a);
-	else if (a->size == 4 || a->size == 5)
-		sort_five(a, b);
-	else
-		sort(a, b);
-	free_stack(a);
-	free_stack(b);
-	return (0);
-}
-
 t_list	*check_argv(t_list **a, char **s)
 {
 	long long	num;
@@ -96,4 +76,24 @@ t_list	*check_argv(t_list **a, char **s)
 		exit(1);
 	}
 	return (*a);
+}
+
+int	main(int argc, char **argv)
+{
+	t_list	*a;
+	t_list	*b;
+
+	if (argc == 1)
+		return (0);
+	a = simplify(check_argv(init_list(&a, 'a'), argv));
+	init_list(&b, 'b');
+	if (a->size == 3)
+		sort_three(a);
+	else if (a->size == 4 || a->size == 5)
+		sort_five(a, b);
+	else
+		sort(a, b);
+	free_stack(a);
+	free_stack(b);
+	return (0);
 }

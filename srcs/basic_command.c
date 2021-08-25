@@ -6,26 +6,11 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 12:29:00 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/25 12:29:07 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/25 12:50:11 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
-
-void	free_stack(t_list *s)
-{
-	t_node	*node;
-	t_node	*temp;
-
-	node = s->first;
-	while (node)
-	{
-		temp = node;
-		node = node->next;
-		free(temp);
-	}
-	free(s);
-}
 
 void	push_first(t_list *s, int val)
 {
@@ -95,4 +80,19 @@ int	pop_last(t_list *s)
 		s->first = NULL;
 	s->size--;
 	return (removed_data);
+}
+
+void	free_stack(t_list *s)
+{
+	t_node	*node;
+	t_node	*temp;
+
+	node = s->first;
+	while (node)
+	{
+		temp = node;
+		node = node->next;
+		free(temp);
+	}
+	free(s);
 }
