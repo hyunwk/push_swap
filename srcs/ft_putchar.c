@@ -6,11 +6,11 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/21 20:53:10 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/24 16:06:32 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/25 13:07:59 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "../push_swap.h"
 
 void	ft_putchar(char c)
 {

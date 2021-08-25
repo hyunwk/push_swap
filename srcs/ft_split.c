@@ -6,11 +6,11 @@
 /*   By: hyunwkim <hyunwkim@42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 17:16:37 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/24 16:06:39 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/25 13:08:05 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "../push_swap.h"
 
 char	**freeall(char **s)
 {

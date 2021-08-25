@@ -6,11 +6,11 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 12:26:44 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/25 12:49:06 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/25 13:08:11 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "../push_swap.h"
 
 t_node	*make_node(int val)
 {

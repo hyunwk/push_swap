@@ -6,11 +6,11 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 12:27:43 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/25 12:31:12 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/25 13:08:22 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "../push_swap.h"
 
 int	is_sorted(t_list *s)
 {

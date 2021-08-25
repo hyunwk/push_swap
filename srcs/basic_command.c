@@ -6,11 +6,11 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 12:29:00 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/25 12:50:11 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/25 13:07:40 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "../push_swap.h"
 
 void	push_first(t_list *s, int val)
 {

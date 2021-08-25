@@ -6,11 +6,11 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 12:28:06 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/25 12:29:38 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/25 13:31:25 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "../push_swap.h"
 
 void	swap(t_list *s)
 {
@@ -51,4 +51,10 @@ void	reverse_rotate(t_list *s)
 	ft_putchar('r');
 	ft_putchar(s->name);
 	ft_putchar('\n');
+}
+
+void	error(void)
+{
+	write(2, "Error\n", 6);
+	exit(1);
 }
