@@ -6,13 +6,13 @@
 #    By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/24 15:57:39 by hyunwkim          #+#    #+#              #
-#    Updated: 2021/08/25 12:51:52 by hyunwkim         ###   ########.fr        #
+#    Updated: 2021/08/27 21:57:59 by hyunwkim         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = push_swap 
 CC = gcc
-CFLAGS = -g -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra
 SRCS_DIR = srcs
 
 SRC = main.c sort.c basic_command.c command.c ft_atoi.c ft_putchar.c ft_split.c 
