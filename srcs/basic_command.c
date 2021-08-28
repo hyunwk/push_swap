@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 12:29:00 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/28 16:11:58 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/28 16:15:42 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,6 @@ int	pop_first(t_list *s)
 	if (origin_first->next != NULL)
 		origin_first->next->prev = NULL;
 	s->first = origin_first->next;
-	origin_first->data = 0;
-	origin_first->next = NULL;
 	free(origin_first);
 	if (s->first == NULL)
 		s->last = NULL;
@@ -75,8 +73,6 @@ int	pop_last(t_list *s)
 	if (origin_last->prev != NULL)
 		origin_last->prev->next = NULL;
 	s->last = origin_last->prev;
-	origin_last->data = 0;
-	origin_last->prev = NULL;
 	free(origin_last);
 	if (s->last == NULL)
 		s->first = NULL;
