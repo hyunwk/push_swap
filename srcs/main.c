@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 12:26:44 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/28 00:47:05 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/28 16:10:43 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,5 @@ int	main(int argc, char **argv)
 		sort(a, b);
 	free_stack(a);
 	free_stack(b);
-	while (1)
-		;
 	return (0);
 }
