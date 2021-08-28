@@ -6,7 +6,7 @@
 /*   By: hyunwkim <hyunwkim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 12:29:00 by hyunwkim          #+#    #+#             */
-/*   Updated: 2021/08/27 21:56:59 by hyunwkim         ###   ########.fr       */
+/*   Updated: 2021/08/28 16:11:58 by hyunwkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ void	push_last(t_list *s, int val)
 {
 	t_node	*new;
 
-	new = make_node(val);
 	if (s->first == NULL)
 		push_first(s, val);
 	else
 	{
+		new = make_node(val);
 		s->last->next = new;
 		new->prev = s->last;
 		s->last = new;
